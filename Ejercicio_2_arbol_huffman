@@ -1,0 +1,86 @@
+# Ejercicio Nº 2: Codifique un programa que utilice el algoritmo de Huffman para comprimir un archivo de
+# caracteres ya generado. Nota: hallar la frecuencia de cada carácter.
+import heapq
+from collections import defaultdict
+
+# Definición de la clase Nodo para el árbol de Huffman
+class NodoHuffman:
+    def __init__(self, caracter, frecuencia):
+        self.caracter = caracter
+        self.frecuencia = frecuencia
+        self.izquierda = None
+        self.derecha = None
+
+    def __lt__(self, otro):
+        return self.frecuencia < otro.frecuencia
+
+# Función para construir el árbol de Huffman
+def construirArbolHuffman(texto):
+    # Calcula la frecuencia de cada carácter en el texto
+    frecuencia = defaultdict(int)
+    for caracter in texto:
+        frecuencia[caracter] += 1
+
+    # Crea una cola de prioridad (heap) para los nodos
+    heap = [NodoHuffman(caracter, frecuencia) for caracter, frecuencia in frecuencia.items()]
+    heapq.heapify(heap)
+
+    # Construye el árbol de Huffman
+    while len(heap) > 1:
+        izquierda = heapq.heappop(heap)
+        derecha = heapq.heappop(heap)
+        fusionado = NodoHuffman(None, izquierda.frecuencia + derecha.frecuencia)
+        fusionado.izquierda = izquierda
+        fusionado.derecha = derecha
+        heapq.heappush(heap, fusionado)
+
+    return heap[0]  # El nodo raíz del árbol de Huffman
+
+# Función para obtener los códigos de Huffman
+def obtenerCodigosHuffman(raiz):
+    codigos = {}
+
+    def recorrer(nodo, codigo):
+        if nodo:
+            if nodo.caracter:
+                codigos[nodo.caracter] = codigo
+            recorrer(nodo.izquierda, codigo + "0")
+            recorrer(nodo.derecha, codigo + "1")
+
+    recorrer(raiz, "")
+    return codigos
+
+# Función para codificar un texto usando los códigos de Huffman
+def codificar(texto, codigos):
+    texto_codificado = ""
+    for caracter in texto:
+        texto_codificado += codigos[caracter]
+    return texto_codificado
+
+
+# Función para decodificar un texto usando el árbol de Huffman
+def decodificar(texto_codificado, raiz):
+    texto_decodificado = ""
+    nodo_actual = raiz
+    for bit in texto_codificado:
+        if bit == "0":
+            nodo_actual = nodo_actual.izquierda
+        else:
+            nodo_actual = nodo_actual.derecha
+        if nodo_actual.caracter:
+            texto_decodificado += nodo_actual.caracter
+            nodo_actual = raiz
+    return texto_decodificado
+
+
+if __name__ == "__main__":
+    texto = input('Ingrese: ')
+    raiz = construirArbolHuffman(texto)
+    codigos_huffman = obtenerCodigosHuffman(raiz)
+    texto_codificado = codificar(texto, codigos_huffman)
+    texto_decodificado = decodificar(texto_codificado, raiz)
+
+    print("Códigos de Huffman:", codigos_huffman)
+    print("Texto Original:", texto)
+    print("Texto Codificado:", texto_codificado)
+    print("Texto Decodificado:", texto_decodificado)
