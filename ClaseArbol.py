@@ -101,7 +101,7 @@ class arbol:
         if nodo is None:
             return None
         if nodo.getdato() == elemento:
-            return nodo.getdato()
+            return nodo
         elif elemento < nodo.getdato():
             return self.bucar_recursivo(nodo.getIzq(), elemento)
         else:
@@ -204,7 +204,73 @@ class arbol:
             self.frontera(nodo.getDer(), frontera)
         return frontera
 
+    def Padre_Hermano(self, valor):
+        if self.__cabeza is None:
+            return None
 
+        padre, hermano = self.encontrar_padre_hermano(self.__cabeza, valor)
+
+        if padre is not None:
+            print(f'El padre de {valor} es: {padre.getdato()}')
+            if hermano is not None:
+                print(f'El hermano de {valor} es: {hermano.getdato()}')
+            else:
+                print(f"No hay hermano de {valor}.")
+        else:
+            print(f'No se encontro el valor {valor} en el arbol')
+
+    def encontrar_padre_hermano(self, nodo, valor):
+        if nodo is None:
+            return None, None
+
+        if nodo.getIzq() and nodo.getIzq().getdato() == valor:
+            derecha_hermano = nodo.getDer()
+            return nodo, derecha_hermano
+        if nodo.getDer() and nodo.getDer().getdato() == valor:
+            izquierda_hermano = nodo.getIzq()
+            return nodo, izquierda_hermano
+
+        izquierda_padre, izquierda_hermano = self.encontrar_padre_hermano(nodo.getIzq(), valor)
+        if izquierda_padre is not None:
+            return izquierda_padre, izquierda_hermano
+
+        derecha_padre, derecha_hermano = self.encontrar_padre_hermano(nodo.getDer(), valor)
+        if derecha_padre is not None:
+            return derecha_padre, derecha_hermano
+
+        return None, None
+
+    def contar_recursivamente(self, nodo):
+        if nodo is None:
+            return 0
+        else:
+            nodos_izq = self.contar_recursivamente(nodo.getIzq())
+            nodos_der = self.contar_recursivamente(nodo.getDer())
+            return 1 + nodos_izq + nodos_der
+
+    def sucesores(self, valor):
+        nodo = self.bucar_recursivo(self.__cabeza, valor)
+        if nodo:
+            sucesores = []
+            self.encontrarsucesores(nodo, sucesores)
+            sucesores_excluyendo_actual = []
+
+            # Iteramos sobre la lista de sucesores y excluimos el nodo actual
+            for sucesor in sucesores:
+                if sucesor != nodo.getdato():
+                    sucesores_excluyendo_actual.append(sucesor)
+
+            return sucesores_excluyendo_actual
+
+        else:
+            print('Nodo no encontrado.')
+        return []
+
+    def encontrarsucesores(self, nodo, sucesores):
+        if nodo:
+            sucesores.append(nodo.getdato())
+            self.encontrarsucesores(nodo.getIzq(), sucesores)
+            self.encontrarsucesores(nodo.getDer(), sucesores)
 
 if __name__ == "__main__":
     a = arbol()
