@@ -33,7 +33,7 @@ class arbol:
     def __init__(self):
         self.__cabeza = None
 
-    def getCabeza(self):
+    def getcabeza(self):
         return self.__cabeza
 
     def insertar(self, elemento):
@@ -99,9 +99,9 @@ class arbol:
     def bucar_recursivo(self, nodo, elemento):
 
         if nodo is None:
-            return print("Error - Elemento Inexistente")
+            return None
         if nodo.getdato() == elemento:
-            return print("Éxito - Elemento existente")
+            return nodo.getdato()
         elif elemento < nodo.getdato():
             return self.bucar_recursivo(nodo.getIzq(), elemento)
         else:
@@ -194,6 +194,18 @@ class arbol:
             self.posorden(nodo.getIzq())
             self.posorden(nodo.getDer())
             print(nodo.getdato())
+
+    def frontera(self, nodo, frontera):
+        if nodo:
+            if nodo.getIzq() is None and nodo.getDer() is None:
+                frontera.append(nodo.getdato())
+
+            self.frontera(nodo.getIzq(), frontera)
+            self.frontera(nodo.getDer(), frontera)
+        return frontera
+
+
+
 if __name__ == "__main__":
     a = arbol()
     a.insertar(19)
@@ -204,24 +216,25 @@ if __name__ == "__main__":
     a.insertar(9)
 
     print("Árbol antes de la supresión:")
-    a.inorden(a.getCabeza())
+    a.inorden(a.getcabeza())
     a.suprimir(3)
     print('Árbol después de la supresión:')
-    a.inorden(a.getCabeza())  # se pasa la cabeza actualizada
-    a.bucar_recursivo(a.getCabeza(), 5)
-    a.nivel(a.getCabeza(), 15, 1)
-    print('Hoja:', a.hoja(a.getCabeza(), 9))
-    print('Padre: ', a.padre(a.getCabeza(), 19, 5))
-    print('Hijo: ', a.hijo(a.getCabeza(), 19, 5))
+    a.inorden(a.getcabeza())  # se pasa la cabeza actualizada
+    encontrado = a.bucar_recursivo(a.getcabeza(), 5)
+    print(f'buscar: {encontrado}')
+    a.nivel(a.getcabeza(), 15, 1)
+    print('Hoja:', a.hoja(a.getcabeza(), 9))
+    print('Padre: ', a.padre(a.getcabeza(), 19, 5))
+    print('Hijo: ', a.hijo(a.getcabeza(), 19, 5))
     camino = a.camino(19, 9)
     print('Camino: ', camino)
-    print('Altura: ', a.altura(a.getCabeza()))
+    print('Altura: ', a.altura(a.getcabeza()))
     print('---INORDEN---')
-    a.inorden(a.getCabeza())
+    a.inorden(a.getcabeza())
     print('---PREORDEN---')
-    a.preorden(a.getCabeza())
+    a.preorden(a.getcabeza())
     print('---POSORDEN---')
-    a.posorden(a.getCabeza())
+    a.posorden(a.getcabeza())
     a.insertar(15)
     #       19
     #      /  \
