@@ -6,13 +6,13 @@ from collections import defaultdict
 # Definición de la clase Nodo para el árbol de Huffman
 class NodoHuffman:
     def __init__(self, caracter, frecuencia):
-        self.caracter = caracter
-        self.frecuencia = frecuencia
-        self.izquierda = None
-        self.derecha = None
+        self.__caracter = caracter
+        self.__frecuencia = frecuencia
+        self.__izquierda = None
+        self.__derecha = None
 
     def __lt__(self, otro):
-        return self.frecuencia < otro.frecuencia
+        return self.__frecuencia < otro.__frecuencia
 
 # Función para construir el árbol de Huffman
 def construirArbolHuffman(texto):
