@@ -8,8 +8,7 @@ if __name__ == "__main__":
     a.insertar(3)
     a.insertar(20)
     a.insertar(9)
-    frontera = []
-    hojas = a.frontera(a.getcabeza(), frontera)
+    hojas = a.frontera(a.getcabeza(), frontera = [])
     print(f'La frontera del arbol es: {hojas}')
 
 
