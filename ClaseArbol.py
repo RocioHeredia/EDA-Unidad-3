@@ -195,15 +195,6 @@ class arbol:
             self.posorden(nodo.getDer())
             print(nodo.getdato())
 
-    def frontera(self, nodo, frontera):
-        if nodo:
-            if nodo.getIzq() is None and nodo.getDer() is None:
-                frontera.append(nodo.getdato())
-
-            self.frontera(nodo.getIzq(), frontera)
-            self.frontera(nodo.getDer(), frontera)
-        return frontera
-
     def Padre_Hermano(self, valor):
         if self.__cabeza is None:
             return None
@@ -309,3 +300,4 @@ if __name__ == "__main__":
     #   3   15
     #       /
     #      9
+
