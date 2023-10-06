@@ -2,3 +2,53 @@ Implemente el TAD Tabla Hash teniendo en cuenta la política de manejo de colisi
 Se pide calcular la Longitud de la Secuencia de Prueba al Buscar una clave teniendo en cuenta:
     1. El tamaño de la tabla Hash no es un número primo.
     2. El tamaño de la tabla Hash sí es un número primo.
+class TablaHash:
+    def __init__(self, tamaño):
+        self.tamaño = tamaño
+        self.tabla = [None] * tamaño
+
+    def hash(self, clave):
+        # Función de transformación usando el método de la división
+        return clave % self.tamaño
+
+    def insertar(self, clave, valor):
+        indice = self.hash(clave)
+        if self.tabla[indice] is None:
+            # Si la posición está vacía, inserta el valor
+            self.tabla[indice] = (clave, valor)
+        else:
+            # Manejo de colisiones con Prueba Lineal
+            i = 1
+            while self.tabla[indice] is not None:
+                indice = (indice + i) % self.tamaño
+                i += 1
+            self.tabla[indice] = (clave, valor)
+
+    def buscar(self, clave):
+        indice = self.hash(clave)
+        i = 1
+        while self.tabla[indice] is not None:
+            if self.tabla[indice][0] == clave:
+                return self.tabla[indice][1]
+            indice = (indice + i) % self.tamaño
+            i += 1
+        return None
+
+# Ejemplo de uso
+tabla = TablaHash(10)  # Cambia el tamaño de la tabla según tus necesidades
+tabla.insertar(5, "Ejemplo 1")
+tabla.insertar(15, "Ejemplo 2")
+
+# Calcular longitud de la secuencia de prueba al buscar una clave
+longitud_secuencia_prueba = 0
+clave_a_buscar = 15
+indice = tabla.hash(clave_a_buscar)
+i = 1
+while tabla.tabla[indice] is not None:
+    if tabla.tabla[indice][0] == clave_a_buscar:
+        break
+    indice = (indice + i) % tabla.tamaño
+    i += 1
+    longitud_secuencia_prueba += 1
+
+print("Longitud de la secuencia de prueba:", longitud_secuencia_prueba)
