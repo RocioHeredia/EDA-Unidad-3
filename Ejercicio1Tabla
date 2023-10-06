@@ -12,7 +12,7 @@ class TablaHash:
 
     def insertar(self, clave, valor): 
         indice = clave % self.tamaño
-        while indice != 0 and indice != clave and indice < self.tamaño:
+        while indice != 0 and indice != clave and indice < self.tamaño: # Verlo porque no se entiende mucho
             self.tabla[indice] = (clave, valor)  # Si la posición está vacía, inserta el valor
         else:
             # Manejo de colisiones con Prueba Lineal
