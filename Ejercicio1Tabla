@@ -1,0 +1,30 @@
+class TablaHashAbierta:
+    def __init__(self, tamaño):
+        self.tamaño = tamaño
+        self.tabla = [None] * tamaño
+
+    def hash(self, clave):
+        # Función de hash simple para convertir una clave en un índice
+        return hash(clave) % self.tamaño
+
+    def insertar(self, clave, valor):
+        índice = self.hash(clave)
+        
+        while self.tabla[índice] is not None:
+            # Resolución de colisión: búsqueda de la siguiente posición disponible
+            índice = (índice + 1) % self.tamaño
+
+        # Insertar la clave y el valor en la posición encontrada
+        self.tabla[índice] = (clave, valor)
+
+    def buscar(self, clave):
+        índice = self.hash(clave)
+        
+        while self.tabla[índice] is not None:
+            if self.tabla[índice][0] == clave:
+                return self.tabla[índice][1]
+            # Si no es la clave buscada, buscar en la siguiente posición
+            índice = (índice + 1) % self.tamaño
+
+        # Si no se encuentra la clave, retornar None
+        return None
