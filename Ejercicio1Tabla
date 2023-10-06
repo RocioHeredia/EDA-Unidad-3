@@ -2,3 +2,82 @@ Implemente el TAD Tabla Hash teniendo en cuenta la política de manejo de colisi
 Se pide calcular la Longitud de la Secuencia de Prueba al Buscar una clave teniendo en cuenta:
     1. El tamaño de la tabla Hash no es un número primo.
     2. El tamaño de la tabla Hash sí es un número primo.
+
+import random
+
+class TablaHash:
+    def __init__(self, tamaño):
+        self.tamaño = tamaño
+        self.tabla = [None] * tamaño
+
+    def es_primo(self, n):
+        # Función para verificar si un número es primo
+        if n <= 1:
+            return False
+        for i in range(2, int(n**0.5) + 1):
+            if n % i == 0:
+                return False
+        return True
+
+    def encontrar_primo_menor(self, n):
+        # Encuentra el número primo más cercano menor o igual a n
+        while not self.es_primo(n):
+            n -= 1
+        return n
+
+    def hash(self, clave):
+        # Función de hash utilizando el método de la división
+        return clave % self.tamaño
+
+    def insertar(self, clave, valor):
+        índice = self.hash(clave)
+        
+        while self.tabla[índice] is not None:
+            # Resolución de colisión: Prueba Lineal
+            índice = (índice + 1) % self.tamaño
+
+        # Insertar la clave y el valor en la posición encontrada
+        self.tabla[índice] = (clave, valor)
+
+    def buscar(self, clave):
+        índice = self.hash(clave)
+        
+        while self.tabla[índice] is not None:
+            if self.tabla[índice][0] == clave:
+                return índice  # Devolver el índice en el que se encontró la clave
+
+            # Prueba Lineal para buscar en la siguiente posición
+            índice = (índice + 1) % self.tamaño
+
+        # Si no se encuentra la clave, retornar -1
+        return -1
+
+# Crear una tabla hash con un tamaño no primo (por ejemplo, 10)
+tamaño_no_primo = 10
+tabla_no_primo = TablaHash(tamaño_no_primo)
+
+# Generar 1000 claves numéricas aleatorias y agregarlas a la tabla
+for _ in range(1000):
+    clave = random.randint(1, 10000)
+    valor = "Valor asociado a " + str(clave)
+    tabla_no_primo.insertar(clave, valor)
+
+# Calcular la Longitud de la Secuencia de Prueba al Buscar una clave (por ejemplo, 123)
+clave_buscada = 123
+índice_encontrado = tabla_no_primo.buscar(clave_buscada)
+print(f"Longitud de la secuencia de prueba para la clave {clave_buscada}: {índice_encontrado + 1}")
+
+# Crear una tabla hash con un tamaño primo (por ejemplo, 11)
+tamaño_primo = 11
+tabla_primo = TablaHash(tamaño_primo)
+
+# Generar 1000 claves numéricas aleatorias y agregarlas a la tabla
+for _ in range(1000):
+    clave = random.randint(1, 10000)
+    valor = "Valor asociado a " + str(clave)
+    tabla_primo.insertar(clave, valor)
+
+# Calcular la Longitud de la Secuencia de Prueba al Buscar una clave (por ejemplo, 123)
+clave_buscada = 123
+índice_encontrado = tabla_primo.buscar(clave_buscada)
+print(f"Longitud de la secuencia de prueba para la clave {clave_buscada}: {índice_encontrado + 1}")
