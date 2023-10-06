@@ -77,6 +77,46 @@ for _ in range(1000):
     valor = "Valor asociado a " + str(clave)
     tabla_primo.insertar(clave, valor)
 
+
+#PRIMERA FORMA:
+import random
+
+class Tabla_Hash:
+    __arre=[]
+    __tam=0
+
+    def __init__(self, cantidad):
+        self.__tam = cantidad
+        self.__arre = [None] * cantidad
+    
+    def hash(self, clave):
+        # Función de hash simple para convertir una clave en un índice
+        return hash(clave) % self.__tam
+
+    def insertar(self, clave, valor):
+        índice = self.hash(clave)
+        
+        while self.__arre[índice] is not None:
+            # Resolución de colisión: búsqueda de la siguiente posición disponible
+            índice = (índice + 1) % self.tamaño
+
+        # Insertar la clave y el valor en la posición encontrada
+        self.__arre[índice] = (clave, valor)
+
+    def buscar(self, clave):
+        índice = self.hash(clave)
+        
+        while self.__arre[índice] is not None:
+            if self.__arre[índice][0] == clave:
+                return self.__arre[índice][1]
+            # Si no es la clave buscada, buscar en la siguiente posición
+            índice = (índice + 1) % self.tamaño
+        # Si no se encuentra la clave, retornar None
+        return None
+
+if __name__ == '__main__':
+    
+
 # Calcular la Longitud de la Secuencia de Prueba al Buscar una clave (por ejemplo, 123)
 clave_buscada = 123
 índice_encontrado = tabla_primo.buscar(clave_buscada)
