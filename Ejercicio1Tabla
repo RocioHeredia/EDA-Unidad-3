@@ -2,51 +2,56 @@ Implemente el TAD Tabla Hash teniendo en cuenta la política de manejo de colisi
 Se pide calcular la Longitud de la Secuencia de Prueba al Buscar una clave teniendo en cuenta:
     1. El tamaño de la tabla Hash no es un número primo.
     2. El tamaño de la tabla Hash sí es un número primo.
-class TablaHash:
-    def __init__(self, tamaño):
-        self.tamaño = tamaño
-        self.tabla = [None] * tamaño
+import numpy as np
+
+class tabla_hash:
+    __arre=[]
+    __cant = int
+    def __init__(self, cantidad):
+        self.__cant = cantidad
+        self.__arre = np.empty(cantidad, dtype=object)
 
     def hash(self, clave):
-        return clave % self.tamaño   # Función de transformación usando el método de la división
+        return clave % self.__cant
+    
+    def pruebasecuencial(self, clave, i):
+        return (self.hash(clave)-i)%self.__cant
 
-    def insertar(self, clave, valor): 
-        indice = clave % self.tamaño
-        while indice != 0 and indice != clave and indice < self.tamaño: # Verlo porque no se entiende mucho
-            self.tabla[indice] = (clave, valor)  # Si la posición está vacía, inserta el valor
+    def insertar(self, clave, valor):
+        
+        indice = self.hash(clave)
+        i = 0
+        print('El indice de la clave es: ', indice)
+        if self.__arre[indice] is None:
+            self.__arre[indice] = (clave, valor)
         else:
-            # Manejo de colisiones con Prueba Lineal
-            while self.tabla[indice] is not None:
-                indice = (indice + 1) % self.tamaño  
-            
-            self.tabla[indice] = (clave, valor)
+            while self.__arre[indice] is not None:
+                indice = self.__arre[indice + 1] % self.__cant
+                    
+            self.__arre[indice] = (clave, valor)
 
     def buscar(self, clave):
         indice = self.hash(clave)
-        while self.tabla[indice] is not None:
-            if self.tabla[indice][0] == clave:
-                return self.tabla[indice][1]
-            indice = (indice + 1) % self.tamaño
+        longitud_secuencia = 0
+        while longitud_secuencia < self.__cant and self.__arre[indice] is not None:
+            longitud_secuencia += 1           
+            if self.__arre[indice][0] == clave:
+                return longitud_secuencia  # Clave encontrada
             
-        return None
-
-# Ejemplo de uso
-tabla = TablaHash(11)  # Cambia el tamaño de la tabla según tus necesidades
-tabla.insertar(5, 1)
-tabla.insertar(15, 2)
-tabla.insertar(11, 8)
+            indice = (indice + 1) % self.__cant
+       
+        return False           # La clave no se encuentra en la tabla
 
 
-# Calcular longitud de la secuencia de prueba al buscar una clave
-longitud_secuencia_prueba = 0
-clave_a_buscar = 5
-indice = tabla.hash(clave_a_buscar)
-print (indice)
-while tabla.tabla[indice] is not None:
-    if tabla.tabla[indice] == clave_a_buscar:
-        break
-    indice = (indice + 1) % tabla.tamaño
-    print('Indice del while', indice)
-    longitud_secuencia_prueba += 1
 
-print("Longitud de la secuencia de prueba:", longitud_secuencia_prueba)
+
+if __name__ == '__main__':
+    N = 7
+    alfa = 0.7
+    M = int(N//0.7)
+
+    tabla = tabla_hash(M)
+    for i in range(M):
+        clave = int(input('Ingrese clave: '))
+        valor = int(input('Ingrese valor: '))
+        tabla.insertar(clave, valor)
