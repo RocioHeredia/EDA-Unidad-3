@@ -55,3 +55,7 @@ if __name__ == '__main__':
         clave = int(input('Ingrese clave: '))
         valor = int(input('Ingrese valor: '))
         tabla.insertar(clave, valor)
+    for i in range(M):
+        clave = int(input('Ingrese clave: '))
+        valor = int(input('Ingrese valor: '))
+        tabla.insertar(clave, valor)
