@@ -1,0 +1,20 @@
+def camino(g,x,y):
+    #g=(V,E) : V = [x1,...,xn] E \subset VxV
+    E = g[0]
+    res = [x]
+    if ( x not in E or y not in E ) :
+        return []
+    elif ( x == y ) :
+        return list(x)
+    else :
+        V = g[1]
+        m = len(V)
+        res = [x]
+        while y != x :
+            for i in range(m):
+                a = V[i]
+                if x == a[0] and a[1] not in res :
+                    x = a[1]
+                    res += [x]
+                    break
+    return res
