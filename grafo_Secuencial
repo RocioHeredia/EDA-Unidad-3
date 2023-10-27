@@ -16,6 +16,7 @@ class grafoS:
         i = self.__vertices.index(i)
         j = self.__vertices.index(j)
         self.__arreglo[i][j]= 1
+        
 
     def cargar_entradas(self, entradas):
         for e in entradas:
@@ -30,9 +31,35 @@ class grafoS:
                 adyacentes.append(c)
         return adyacentes
     
-    def camino(self, u, v):
+    def listaCamino(self, u):
         camino = []
+        i = self.__vertices.index(u)
+        for j, valor in enumerate(self.__arreglo[i]):
+            if valor == 1:
+                camino.append(self.__vertices[j])  # Cambié v[j] por self.__V[j]
+        return camino
+
+    def encontrar_camino(self, u, v, visitados, camino):
+        visitados.add(u)
+        camino.append(u)
+
+        if u == v:
+            return camino
+
+        for nodo in self.listaCamino(u):
+            if nodo not in visitados:
+                resultado = self.encontrar_camino(nodo, v, visitados, camino)
+                if resultado:
+                    return resultado
+
+        camino.pop()
+        return None
+    
+    def conexo(self):
         
+        
+
+
 
 
 
@@ -40,11 +67,17 @@ class grafoS:
     
 
 if __name__ == '__main__':
-    v= [4,5,7]
-    e = [(4,5),(4,7),(5,7),(7,4)]
+    v= [4,5,7,8]
+    e = [(4,8),(4,7),(7,5),(7,8)]
     g = grafoS(v)
     g.cargar_entradas(e)
     g.imprime_grafo()
     u = int(input('Ingrese el vertice del cual quiere saber los adyacentes: '))
     print(g.adyacentes(u))
-    g.camino()
+    print ('--------')
+    camino = g.encontrar_camino(4, 54, set(), [])
+    if camino:
+        print(f"Camino desde {4} a {5}: {camino}")
+    else:
+        print(f"No hay camino desde {4} a {5}")
+    g.conexo()
