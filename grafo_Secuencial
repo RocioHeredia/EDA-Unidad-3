@@ -1,0 +1,50 @@
+import numpy as np
+class grafoS:
+    __arreglo = []
+    __vertices = int
+
+    def __init__(self, vertices):
+        v = len(vertices)
+        self.__vertices = vertices
+        self.__arreglo = np.zeros((v, v), dtype=int)
+    
+    def imprime_grafo(self):
+        print (self.__arreglo)
+
+    def cargar_aristas(self, i, j):
+
+        i = self.__vertices.index(i)
+        j = self.__vertices.index(j)
+        self.__arreglo[i][j]= 1
+
+    def cargar_entradas(self, entradas):
+        for e in entradas:
+            self.cargar_aristas(e[0],e[1])
+    
+    def adyacentes(self, u):
+        adyacentes = []
+        i = self.__vertices.index(u)
+        for c in self.__vertices:
+            j = self.__vertices.index(c)
+            if self.__arreglo[i][j] == 1:
+                adyacentes.append(c)
+        return adyacentes
+    
+    def camino(self, u, v):
+        camino = []
+        
+
+
+
+
+    
+
+if __name__ == '__main__':
+    v= [4,5,7]
+    e = [(4,5),(4,7),(5,7),(7,4)]
+    g = grafoS(v)
+    g.cargar_entradas(e)
+    g.imprime_grafo()
+    u = int(input('Ingrese el vertice del cual quiere saber los adyacentes: '))
+    print(g.adyacentes(u))
+    g.camino()
