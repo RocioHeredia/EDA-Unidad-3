@@ -1,4 +1,5 @@
 import numpy as np
+from cola import cola
 
 
 class grafoS:
@@ -18,7 +19,7 @@ class grafoS:
         i = self.__vertices.index(i)
         j = self.__vertices.index(j)
         self.__arreglo[i][j] = 1
-        # self.__arreglo[j][i] = 1
+        self.__arreglo[j][i] = 1
 
     def cargar_entradas(self, entradas):
         for e in entradas:
@@ -78,6 +79,7 @@ class grafoS:
                 return True
         visitados.remove(vertice)
         return False
+    
     def aciclico(self):
         visitados = set()
         for vertice in self.__vertices:
@@ -85,6 +87,26 @@ class grafoS:
                 return False  # El grafo tiene un ciclo
 
         return True  # El grafo es acíclico
+    
+    def REA(self):
+        actual = int(input('Ingresa inicial: '))
+        if actual in self.__vertices:
+            Cola = cola(len(self.__vertices))
+            Cola.insertar(actual)
+            visitados=[actual]
+            while not Cola.vacia():
+                actual = int(Cola.suprimir())
+                for adyacente in self.adyacentes(actual):
+                    if adyacente not in visitados:
+                        visitados.append(Cola.insertar(adyacente))
+            return visitados
+        else:
+            print('El elemento ingresado no se encuentra como vertice')
+                
+    def REP(self):
+        
+
+        
 
 
 if __name__ == '__main__':
@@ -102,5 +124,6 @@ if __name__ == '__main__':
         print(f"Camino desde {4} a {5}: {camino}")
     else:
         print(f"No hay camino desde {4} a {5}")
-    print(g.conexo())
-    print(g.aciclico())
+    print('Conexo: ', g.conexo())
+    print('Aciclico: ',g.aciclico())
+    print(g.REA())
