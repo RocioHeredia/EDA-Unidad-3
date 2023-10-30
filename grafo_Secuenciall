@@ -1,6 +1,6 @@
 import numpy as np
 from cola import cola
-
+from Pila import pila
 
 class grafoS:
     __arreglo = []
@@ -104,14 +104,29 @@ class grafoS:
             print('El elemento ingresado no se encuentra como vertice')
                 
     def REP(self):
-        
+        actual = int(input('Ingresa inicial: '))
+        if actual in self.__vertices:
+            Pila = pila(len(self.__vertices))
+            Pila.insertar(actual)
+            visitados=[actual]
+            orden_eliminacion = []
+            while not Pila.pila_vacia():
+                actual = int(Pila.suprimir())
+                orden_eliminacion.append(actual)
+                for adyacente in self.adyacentes(actual):
+                    if adyacente not in visitados:
+                        visitados.append(Pila.insertar(adyacente))
+            return orden_eliminacion
+        else:
+            print('El elemento ingresado no se encuentra como vertice')
+
 
         
 
 
 if __name__ == '__main__':
     v = [1, 2, 3, 4, 5]
-    e = [(1, 2), (1, 4), (2, 5), (3, 5), (4, 3)]
+    e = [(1, 2), (1, 4), (2, 5), (3, 5), (4, 5)]
 
     g = grafoS(v)
     g.cargar_entradas(e)
@@ -127,3 +142,4 @@ if __name__ == '__main__':
     print('Conexo: ', g.conexo())
     print('Aciclico: ',g.aciclico())
     print(g.REA())
+    print(g.REP())
