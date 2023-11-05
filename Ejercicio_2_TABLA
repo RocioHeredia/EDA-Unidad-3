@@ -17,7 +17,7 @@ class tablaHash:
         if len(cadena) < 2: # Verifica que el numero sea
             return print("El número generado es demasiado corto para extraer dos dígitos")
         dos_digitos = int(cadena[2:])  # En este coloca los dos numeros del final si coloco [:2] trae los dos del principio
-        return dos_digitos
+        return self.funcion_hash(dos_digitos)
 
     def metodo_plegado(self, clave):
         cadena = str(clave)
@@ -26,20 +26,16 @@ class tablaHash:
             par = int(cadena[i:i + 2])
             pares.append(par)  # Agregamos Los pares de numeros en la lista.
         suma = sum(pares)  # Suma todos los elementos de la lista
-        return suma
+        return self.funcion_hash(suma)
 
     def metodo_cuadrado_medio(self, clave):
-        cuadrado = clave * clave
-
-        cadena = str(cuadrado)
-        mitad = len(cadena) // 2
-
-        if len(cadena) % 2 == 0:
-            medio = int(cadena[mitad-1: mitad+1])
-        else:
-            medio = int(cadena[mitad-1: mitad+2])
-
-        return medio
+        cant_digitos = 3
+        # cant_digitos = int(input('Ingresa cant de digitos medios: '))
+        # cant_digitos = len(str(self.__tamano-1))
+        cuadrado = str(clave * clave)
+        centro = (len(cuadrado) - cant_digitos) // 2
+        resultado = int(cuadrado[centro: centro + cant_digitos])
+        return self.funcion_hash(resultado)
 
     def metodo_alfanumerico(self, clave):
         suma = 0
@@ -47,7 +43,6 @@ class tablaHash:
         for char in range(len(clave)):
             suma += ord(clave[char]) * (10 ** i)
             i += 1
-
         return suma
 
     def pruebaSecuencial(self, clave, i):
@@ -66,6 +61,7 @@ class tablaHash:
                 self.__table[indice] = (clave, valor)
                 return  # Elemento insertado con éxito
             i += 1
+        
             indice = self.pruebaSecuencial(clave, i)
         print("La tabla está llena. No se pueden insertar más elementos.")
 
@@ -94,7 +90,6 @@ M = int(N / alfa)
 print(M)
 hash = tablaHash(M)
 
-hash.insertar(1001, 7)
 hash.insertar(2002, 10)
 hash.insertar(3003, 9)
 hash.insertar(8008, 2)
