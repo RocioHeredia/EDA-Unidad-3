@@ -1,0 +1,114 @@
+import numpy as np
+
+
+class tablaHash:
+    __tamano = int
+    __table = []
+
+    def __init__(self, tamano):
+        self.__tamano = tamano
+        self.__table = np.empty(tamano, dtype=object)
+
+    def funcion_hash(self, clave):
+        return clave % self.__tamano
+
+    def metodo_extraccion(self, clave):
+        cadena = str(clave)
+        if len(cadena) < 2: # Verifica que el numero sea
+            return print("El número generado es demasiado corto para extraer dos dígitos")
+        dos_digitos = int(cadena[2:])  # En este coloca los dos numeros del final si coloco [:2] trae los dos del principio
+        return dos_digitos
+
+    def metodo_plegado(self, clave):
+        cadena = str(clave)
+        pares = []
+        for i in range(0, len(cadena), 2):  # Va de dos en dos en la cadena
+            par = int(cadena[i:i + 2])
+            pares.append(par)  # Agregamos Los pares de numeros en la lista.
+        suma = sum(pares)  # Suma todos los elementos de la lista
+        return suma
+
+    def metodo_cuadrado_medio(self, clave):
+        cuadrado = clave * clave
+
+        cadena = str(cuadrado)
+        mitad = len(cadena) // 2
+
+        if len(cadena) % 2 == 0:
+            medio = int(cadena[mitad-1: mitad+1])
+        else:
+            medio = int(cadena[mitad-1: mitad+2])
+
+        return medio
+
+    def metodo_alfanumerico(self, clave):
+        suma = 0
+        i = 1
+        for char in range(len(clave)):
+            suma += ord(clave[char]) * (10 ** i)
+            i += 1
+
+        return suma
+
+    def pruebaSecuencial(self, clave, i):
+        # return (self.metodo_cuadrado_medio(clave) + i) % self.__tamano
+        # return (self.metodo_plegado(clave) + i) % self.__tamano
+        # return (self.metodo_extraccion(clave)+i) % self.__tamano
+        return (self.funcion_hash(clave) + i) % self.__tamano  # (h(k) + i * p (k) ) mod M 0 <= i <= M+1
+        # return (self.metodo_alfanumerico(clave)+i) % self.__tamano
+
+    def insertar(self, clave, valor):
+        i = 0
+        # indiceh = self.funcion_hash(clave)
+        indice = self.pruebaSecuencial(clave, i)
+        while i < self.__tamano:
+            if self.__table[indice] is None:
+                self.__table[indice] = (clave, valor)
+                return  # Elemento insertado con éxito
+            i += 1
+            indice = self.pruebaSecuencial(clave, i)
+        print("La tabla está llena. No se pueden insertar más elementos.")
+
+    def buscar(self, clave):
+        i = 0
+        indice = self.pruebaSecuencial(clave, i)
+        while self.__table[indice] is not None and self.__table[indice][0] != clave:
+            i += 1
+            indice = self.pruebaSecuencial(clave, i)
+        return f"{indice}"
+
+    def imprime(self):
+        for i, elemento in enumerate(self.__table):
+            if elemento is not None:
+                clave, valor = elemento
+                print(f"Posición: {i}, clave: {clave}, valor: {valor}")
+            else:
+                print(f"Posición: {i}: vacio")
+
+
+# N = 11 # Numero no primo
+N = 10 # Numero primo
+
+alfa = 0.7
+M = int(N / alfa)
+print(M)
+hash = tablaHash(M)
+
+hash.insertar(1001, 7)
+hash.insertar(2002, 10)
+hash.insertar(3003, 9)
+hash.insertar(8008, 2)
+hash.insertar(9009, 4)
+hash.insertar(1010, 11)
+hash.insertar(1111, 14)
+hash.insertar(1212, 13)
+hash.insertar(1313, 12)
+hash.insertar(1414, 15)
+hash.insertar(3636, 39)
+hash.insertar(2629, 58)
+
+
+hash.imprime()
+clave = 3639
+lonSecuencia = hash.buscar(clave)
+print(f"Longitud para la clave {clave}: {lonSecuencia}")
