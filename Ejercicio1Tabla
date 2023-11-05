@@ -2,7 +2,6 @@ Implemente el TAD Tabla Hash teniendo en cuenta la política de manejo de colisi
 Se pide calcular la Longitud de la Secuencia de Prueba al Buscar una clave teniendo en cuenta:
     1. El tamaño de la tabla Hash no es un número primo.
     2. El tamaño de la tabla Hash sí es un número primo.
-
 import numpy as np
 
 
@@ -15,7 +14,7 @@ class tablaHash:
         self.__table = np.empty(tamano, dtype=object)
 
     def funcion_hash(self, clave):
-        return int(clave % self.__tamano)
+        return clave % self.__tamano
 
     def pruebaSecuencial(self, clave, i):
         return (self.funcion_hash(clave) + i) % self.__tamano  # (h(k) + i * p (k) ) mod M 0 <= i <= M+1
@@ -24,16 +23,18 @@ class tablaHash:
         i = 0
         # indiceh = self.funcion_hash(clave)
         indice = self.pruebaSecuencial(clave, i)
-        while self.__table[indice] is not None and i < self.__tamano:
+        while i < self.__tamano:
+            if self.__table[indice] is None:
+                self.__table[indice] = (clave, valor)
+                return  # Elemento insertado con éxito
             i += 1
             indice = self.pruebaSecuencial(clave, i)
-        self.__table[indice] = (clave, valor)
+        print("La tabla está llena. No se pueden insertar más elementos.")
 
     def buscar(self, clave):
         i = 0
         indice = self.pruebaSecuencial(clave, i)
-
-        while self.__table[indice] is not None and self.__table[indice] != clave:
+        while self.__table[indice] is not None and self.__table[indice][0] != clave:
             i += 1
             indice = self.pruebaSecuencial(clave, i)
         return f"{indice}"
@@ -47,26 +48,30 @@ class tablaHash:
                 print(f"Posición: {i}: vacio")
 
 
-# N = 29 # Numero no primo
+N = 11 # Numero no primo
 # N = 10 # Numero primo
+
 alfa = 0.7
 M = int(N / alfa)
 print(M)
 hash = tablaHash(M)
 
-hash.insertar(87, 7)
-hash.insertar(88, 10)
-hash.insertar(89, 9)
-print('-------------')
-hash.insertar(89, 5)
-print('-------------')
-hash.insertar(79, 8)
-hash.insertar(96, 3)
+hash.insertar(1001, 7)
+hash.insertar(2002, 10)
+hash.insertar(3003, 9)
+hash.insertar(8008, 2)
+hash.insertar(9009, 4)
+hash.insertar(1010, 11)
+hash.insertar(1111, 14)
+hash.insertar(1212, 13)
+hash.insertar(1313, 12)
+hash.insertar(1414, 15)
+hash.insertar(3636, 39)
+hash.insertar(2629, 58)
+
 
 hash.imprime()
-
-clave = 87
+clave = 3639
 lonSecuencia = hash.buscar(clave)
 print(f"Longitud para la clave {clave}: {lonSecuencia}")
-        
 
