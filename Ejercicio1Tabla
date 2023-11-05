@@ -2,119 +2,71 @@ Implemente el TAD Tabla Hash teniendo en cuenta la política de manejo de colisi
 Se pide calcular la Longitud de la Secuencia de Prueba al Buscar una clave teniendo en cuenta:
     1. El tamaño de la tabla Hash no es un número primo.
     2. El tamaño de la tabla Hash sí es un número primo.
-import numpy as np
-
-class tabla_hash:
-    __arre=[]
-    __cant = int
-    def __init__(self, cantidad):
-        self.__cant = cantidad
-        self.__arre = np.empty(cantidad, dtype=object)
-
-    def hash(self, clave):
-        return clave % self.__cant
-    
-    def pruebasecuencial(self, clave, i):
-        return (self.hash(clave)-i)%self.__cant
-
-    def insertar(self, clave, valor):
-        
-        indice = self.hash(clave)
-        i = 0
-        print('El indice de la clave es: ', indice)
-        if self.__arre[indice] is None:
-            self.__arre[indice] = (clave, valor)
-        else:
-            while self.__arre[indice] is not None:
-                indice = self.__arre[indice + 1] % self.__cant
-                    
-            self.__arre[indice] = (clave, valor)
-
-    def buscar(self, clave):
-        indice = self.hash(clave)
-        longitud_secuencia = 0
-        while longitud_secuencia < self.__cant and self.__arre[indice] is not None:
-            longitud_secuencia += 1           
-            if self.__arre[indice][0] == clave:
-                return longitud_secuencia  # Clave encontrada
-            
-            indice = (indice + 1) % self.__cant
-       
-        return False           # La clave no se encuentra en la tabla
-
-
-
-
-if __name__ == '__main__':
-    N = 7
-    alfa = 0.7
-    M = int(N//0.7)
-
-    tabla = tabla_hash(M)
-    for i in range(M):
-        clave = int(input('Ingrese clave: '))
-        valor = int(input('Ingrese valor: '))
-        tabla.insertar(clave, valor)
-    for i in range(M):
-        clave = int(input('Ingrese clave: '))
-        valor = int(input('Ingrese valor: '))
-        tabla.insertar(clave, valor)
-
-
 
 import numpy as np
+
 
 class tablaHash:
-    __tamaño=int
-    __arreglo=[]
-    def __init__(self, tamaño):
-        self.__tamaño=tamaño
-        self.__arreglo=np.empty(tamaño, dtype=object)
-        
-    def hash(self, clave):
-        return clave % self.__tamaño
-    
+    __tamano = int
+    __table = []
+
+    def __init__(self, tamano):
+        self.__tamano = tamano
+        self.__table = np.empty(tamano, dtype=object)
+
+    def funcion_hash(self, clave):
+        return int(clave % self.__tamano)
+
     def pruebaSecuencial(self, clave, i):
-        return (self.hash(clave)-i) % self.__tamaño # (h(k) – i * p (k) ) mod M 0 <= i <= M-1
-    
+        return (self.funcion_hash(clave) + i) % self.__tamano  # (h(k) + i * p (k) ) mod M 0 <= i <= M+1
+
     def insertar(self, clave, valor):
-        i=0
-        indice=self.pruebaSecuencial(clave, i)
-        while self.__arreglo[indice] is not None:
-            i+=1
-            indice= self.pruebaSecuencial(clave, i)
-        self.__arreglo[indice] = (clave, valor)
-            
-    def buscar(self, clave):
-        i=0
-        indice= self.pruebaSecuencial(clave, i)
-        print(indice)
-        while self.__arreglo[indice] is not None and self.__arreglo[indice][0] != clave:
-            i+=1
+        i = 0
+        # indiceh = self.funcion_hash(clave)
+        indice = self.pruebaSecuencial(clave, i)
+        while self.__table[indice] is not None and i < self.__tamano:
+            i += 1
             indice = self.pruebaSecuencial(clave, i)
-        if self.__arreglo[indice] is None:
-            return f"la clave no existe"
-        return f"longitud {indice}"
+        self.__table[indice] = (clave, valor)
+
+    def buscar(self, clave):
+        i = 0
+        indice = self.pruebaSecuencial(clave, i)
+
+        while self.__table[indice] is not None and self.__table[indice] != clave:
+            i += 1
+            indice = self.pruebaSecuencial(clave, i)
+        return f"{indice}"
 
     def imprime(self):
-        for i, elemento in enumerate(self.__arreglo):
+        for i, elemento in enumerate(self.__table):
             if elemento is not None:
-                clave, valor= elemento
-                print(f"indice: {i}, clave: {clave}, valor: {valor}")
+                clave, valor = elemento
+                print(f"Posición: {i}, clave: {clave}, valor: {valor}")
             else:
-                print(f"indice {i}: vacio")
-    
-N=5
-alfa=0.7
-M=int(N//alfa)
-hash=tablaHash(M)
-claves= [16,8,19,4,5]
-for clave in claves:
-    hash.insertar(clave, "Valor")
+                print(f"Posición: {i}: vacio")
+
+
+# N = 29 # Numero no primo
+# N = 10 # Numero primo
+alfa = 0.7
+M = int(N / alfa)
+print(M)
+hash = tablaHash(M)
+
+hash.insertar(87, 7)
+hash.insertar(88, 10)
+hash.insertar(89, 9)
+print('-------------')
+hash.insertar(89, 5)
+print('-------------')
+hash.insertar(79, 8)
+hash.insertar(96, 3)
+
 hash.imprime()
 
-buscar=16
-lonSecuencia= hash.buscar(buscar)
-print(f"Longitud para la clave: {lonSecuencia}")
+clave = 87
+lonSecuencia = hash.buscar(clave)
+print(f"Longitud para la clave {clave}: {lonSecuencia}")
         
 
