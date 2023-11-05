@@ -1,0 +1,120 @@
+import numpy as np
+
+
+class Nodo:
+    def __init__(self, clave, valor):
+        self.__clave = clave
+        self.__valor = valor
+        self.__sig = None
+
+    def getclave(self):
+        return self.__clave
+
+    def getvalor(self):
+        return self.__valor
+
+    def getsig(self):
+        return self.__sig
+
+    def setsig(self, sig):
+        self.__sig = sig
+
+class TablaHash:
+    def __init__(self, tamano):
+        self.__tamano = tamano
+        self.__tabla = np.empty(tamano, dtype=object)
+
+    def funcion_hash(self, clave):
+        return clave % self.__tamano
+
+    def metodo_plegado(self, clave):
+        cadena = str(clave)
+        pares = []
+        for i in range(0, len(cadena), 2):  # Va de dos en dos en la cadena
+            par = int(cadena[i:i + 2])
+            pares.append(par)  # Agregamos Los pares de numeros en la lista.
+        suma = sum(pares)  # Suma todos los elementos de la lista
+        return self.funcion_hash(suma)
+
+    def agregar(self, clave, valor):
+        indice = self.metodo_plegado(clave)
+        nuevo_nodo = Nodo(clave, valor)
+
+        if self.__tabla[indice] is None:
+            self.__tabla[indice] = nuevo_nodo
+        else:
+            # Si hay un nodo en esta posición, agregamos el nuevo nodo al final de la lista enlazada
+            actual = self.__tabla[indice]
+            while actual.getsig() is not None:
+                actual = actual.getsig()
+            actual.setsig(nuevo_nodo)
+
+    def obtener(self, clave):
+        indice = self.funcion_hash(clave)
+        actual = self.__tabla[indice]
+
+        while actual is not None:
+            if actual.getclave() == clave:
+                return actual.getvalor()
+            actual = actual.getsig()
+        return None
+
+    def imprimir_tabla(self):
+        for indice in range(self.__tamano):
+            print(f"Posición {indice}:")
+            actual = self.__tabla[indice]
+            while actual is not None:
+                print(f"  Clave: {actual.getclave()}, Valor: {actual.getvalor()}")
+                actual = actual.getsig()
+    def obtener_longitudes_listas(self):
+        longitudes_listas = []
+        for indice in range(self.__tamano):
+            actual = self.__tabla[indice]
+            longitud_lista = 0
+            while actual is not None:
+                longitud_lista += 1
+                actual = actual.getsig()
+            longitudes_listas.append(longitud_lista)
+        return longitudes_listas
+
+    def calcular_promedio_longitudes(self, longitudes_listas):
+        if not longitudes_listas:
+            return 0
+        suma_longitudes = sum(longitudes_listas)
+        return suma_longitudes / len(longitudes_listas)
+
+    def contar_listas_con_variacion(self, variacion):
+        longitudes_listas = self.obtener_longitudes_listas()
+        promedio_longitudes = self.calcular_promedio_longitudes(longitudes_listas)
+        contador = 0
+        for longitud in longitudes_listas:
+            diferencia = abs(longitud - promedio_longitudes)
+            if diferencia <= variacion:
+                contador += 1
+        return contador
+# Crear una tabla hash con un tamaño específico
+
+tabla_hash = TablaHash(10)
+tabla_hash.agregar(20810, 65)
+tabla_hash.agregar(8120, 36)
+tabla_hash.agregar(8219,32)
+tabla_hash.agregar(8021,39)
+tabla_hash.agregar(20820, 95)
+tabla_hash.agregar(20999, 5)
+variacion = 3
+tabla_hash.imprimir_tabla()
+# Obtener longitudes de las listas de claves sinónimas
+longitudes_listas = tabla_hash.obtener_longitudes_listas()
+# Calcular el promedio de las longitudes
+promedio_longitudes = tabla_hash.calcular_promedio_longitudes(longitudes_listas)
+
+# Especificar la variación permitida (hasta 3 unidades)
+variacion = 3
+
+# Contar la cantidad de listas con variación en sus longitudes
+listas_con_variacion = tabla_hash.contar_listas_con_variacion(variacion)
+
+print("Longitudes de listas de claves sinónimas:", longitudes_listas)
+print("Promedio de longitudes:", promedio_longitudes)
+print("Cantidad de listas con variación de hasta", variacion, "unidades:", listas_con_variacion)
+
