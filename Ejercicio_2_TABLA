@@ -14,7 +14,7 @@ class tablaHash:
 
     def metodo_extraccion(self, clave):
         cadena = str(clave)
-        if len(cadena) < 2: # Verifica que el numero sea
+        if len(cadena) < 2: # Verifica que el numero sea de longitud mayor a dos
             return print("El número generado es demasiado corto para extraer dos dígitos")
         dos_digitos = int(cadena[2:])  # En este coloca los dos numeros del final si coloco [:2] trae los dos del principio
         return self.funcion_hash(dos_digitos)
