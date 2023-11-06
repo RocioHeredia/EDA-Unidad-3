@@ -101,8 +101,6 @@ hash.insertar(1313, 12)
 hash.insertar(1414, 15)
 hash.insertar(3636, 39)
 hash.insertar(2629, 58)
-
-
 hash.imprime()
 clave = 3639
 lonSecuencia = hash.buscar(clave)
