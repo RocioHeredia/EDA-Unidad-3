@@ -1,0 +1,102 @@
+import numpy as np
+
+
+class Bucket:
+    def __init__(self, b):
+        self.__data = np.empty(b, dtype=object)
+
+    def getdata(self):
+        return self.__data
+
+
+class TablaHash:
+    def __init__(self, tam, b):
+        self.__tamano = tam
+        self.__tam_bucket = b
+        self.__area_primaria = np.array([Bucket(b) for _ in range(self.__tamano)], dtype=object)
+        self.__area_overflow = np.array([Bucket(b) for _ in range(self.__tamano // 5)], dtype=object)  # Área de Overflow (20% de M)
+        self.__buckets_desbordados = 0
+        self.__buckets_subocupados = 0
+
+    def funcion_hash(self, clave):
+        return clave % self.__tamano
+
+    def metodo_extraccion(self, clave):
+        cadena = str(clave)
+        if len(cadena) < 2:  # Verifica que el numero sea
+            return print("El número generado es demasiado corto para extraer dos dígitos")
+        dos_digitos = int(cadena[:2])  # En este coloca los dos numeros del final si coloco [:2] trae los dos del principio
+        return self.funcion_hash(dos_digitos)
+
+    def insertar(self, clave, valor):
+        indice = self.metodo_extraccion(clave)
+        bucket = self.__area_primaria[indice]
+        if all(bucket.getdata()):
+            # El Bucket está lleno, se usa el área de overflow
+            bucket_index_overflow = indice % len(self.__area_overflow)
+            bucket_overflow = self.__area_overflow[bucket_index_overflow]
+
+            if not all(bucket_overflow.getdata()):
+                # El Bucket de Overflow no está lleno, insertar la clave
+                for i in range(self.__tam_bucket):
+                    if bucket_overflow.getdata()[i] is None:
+                        bucket_overflow.getdata()[i] = (clave, valor)
+                        return
+        else:
+            # El Bucket aún tiene espacio, insertar la clave
+            for i in range(self.__tam_bucket):
+                if bucket.getdata()[i] is None:
+                    bucket.getdata()[i] = (clave, valor)
+                    return
+
+    def buscar(self, clave):
+        indice = self.metodo_extraccion(clave)
+        bucket = self.__area_primaria[indice]
+        for i in range(self.__tam_bucket):
+            if bucket.getdata()[i] is not None and bucket.getdata()[i][0] == clave:
+                return bucket.getdata()[i][1]
+        return None
+
+    def imprimir_tabla(self):
+        for i in range(self.__tamano):
+            bucket = self.__area_primaria[i]
+            print(f"Bucket {i}:")
+            for j in range(self.__tam_bucket):
+                if bucket.getdata()[j] is not None:
+                    print(f"  {bucket.getdata()[j][0]}: {bucket.getdata()[j][1]}")
+        print("Área de Overflow:")
+        for i in range(len(self.__area_overflow)):
+            bucket_overflow = self.__area_overflow[i]
+            print(f"Bucket Overflow {i}:")
+            for j in range(self.__tam_bucket):
+                if bucket_overflow.getdata()[j] is not None:
+                    print(f"  {bucket_overflow.getdata()[j][0]}: {bucket_overflow.getdata()[j][1]}")
+
+    def contar_buckets_desbordados(self):
+        cont = 0
+        for bucket in self.__area_overflow:
+            if any(data is not None for data in bucket.getdata() for bucket in self.__area_overflow):
+                cont += 1
+        return cont
+
+    def contar_buckets_subocupados(self):
+        cont = 0
+        for bucket in self.__area_primaria:
+            if all(data is None for data in bucket.getdata()):
+                cont += 1
+        return cont
+
+
+tabla = TablaHash(10, 2)
+
+# Insertar datos en la tabla hash
+tabla.insertar(59, "Dato 1")
+tabla.insertar(25, "Dato 2")
+tabla.insertar(25, "Dato 3")
+tabla.insertar(35, "Dato 4")
+
+
+tabla.imprimir_tabla()
+
+print("Cantidad de Buckets desbordados:", tabla.contar_buckets_desbordados())
+print("Cantidad de Buckets subocupados:", tabla.contar_buckets_subocupados())
