@@ -1,0 +1,195 @@
+import numpy as np
+
+class digrafo:
+
+    __arreglo = []
+    __vertices = int
+
+    def __init__(self, vertices):
+        v = len(vertices)
+        self.__vertices = vertices
+        self.__arreglo = np.zeros((v, v), dtype=int)
+
+    def imprime_digrafo(self):
+        print(self.__arreglo)
+
+    def cargar_aristas(self, i, j):
+        i = self.__vertices.index(i)
+        j = self.__vertices.index(j)
+        self.__arreglo[i][j] = 1
+
+    def insertar_entradas(self, entradas):
+        for e in entradas:
+            self.cargar_aristas(e[0], e[1])
+
+    def adyacentes(self, u):
+        ady = []
+        i = self.__vertices.index(u)
+        for c in self.__vertices:
+            j = self.__vertices.index(c)
+            if self.__arreglo[i][j] == 1:
+                ady.append(c)
+        return ady
+    def camino(self, c):
+        camino = []
+        i = self.__vertices.index(c)
+        for j, valor in enumerate(self.__arreglo[i]):
+            if valor == 1:
+                camino.append(self.__vertices[j])
+        return camino
+    def encontrar_camino(self, u, v, visitados, camino):
+        visitados.add(u)
+        camino.append(u)
+        if u == v:
+            return camino
+        else:
+            for c in self.camino(u):
+                if c not in visitados:
+                    resultado = self.encontrar_camino(c, v, visitados, camino)
+                    if resultado:
+                        return resultado
+
+
+    def es_conexo(self):
+
+        for i in range(len(self.__vertices)):
+            for j in range(i + 1, len(self.__vertices)):
+                u = self.__vertices[i]
+                v = self.__vertices[j]
+                camino = self.encontrar_camino(u, v, set(), [])
+                if not camino:
+                    return False
+
+        return True
+
+    def tiene_ciclo(self, vertice, visitados):
+        if vertice in visitados:
+            return True
+        visitados.add(vertice)
+        for vecino in self.adyacentes(vertice):
+            if self.tiene_ciclo(vecino, visitados):
+                return True
+        visitados.remove(vertice)
+        return False
+
+    def aciclico(self):
+        visitados = set()
+        for vertice in self.__vertices:
+            if self.tiene_ciclo(vertice, visitados):
+                return False  # El grafo tiene un ciclo
+        return True
+
+    def REA(self, u):
+        visitados = set()
+        resultado = []
+
+        if u in self.__vertices:
+            cola = []
+            cola.append(u)
+            while cola:
+                actual = int(cola.pop(0))
+                visitados.add(actual)
+                resultado.append(actual)
+                for adyacente in self.adyacentes(actual):
+                    if adyacente not in visitados:
+                        visitados.add(adyacente)
+                        cola.append(adyacente)
+            return resultado
+        else:
+            print('El elemento ingresado no se encuentra como vertice')
+
+    def REP(self, u):
+        visitados = set()
+        resultado = []
+        pila = [u]
+        while pila:
+            vertice = pila.pop()
+            if vertice not in visitados:
+                visitados.add(vertice)
+                resultado.append(vertice)
+                for adyacente in self.adyacentes(vertice):
+                    if adyacente not in visitados:
+                        pila.append(adyacente)
+
+        return resultado
+
+    def grado_entrada(self, u):
+        i = self.__vertices.index(u)
+        grado = 0
+
+        for j in range(len(self.__vertices)):
+            grado += self.__arreglo[j][i]
+
+        return grado
+
+    def grad_salida(self, nodo):
+        i = self.__vertices.index(nodo)
+        salida = 0
+        for j in range(len(self.__vertices)):
+            salida += self.__arreglo[i][j]
+        return salida
+
+    def fuente(self, nodo):
+        j = self.__vertices.index(nodo)
+
+        # Verificar si no hay arcos entrantes al nodo
+        for i in range(len(self.__vertices)):
+            if self.__arreglo[i][j] == 1:
+                return False  # Hay al menos un arco entrante
+
+        return True  # No hay arcos entrantes
+
+    def sumidero(self, nodo):
+        i = self.__vertices.index(nodo)
+        for j in range(len(self.__vertices)):
+            if self.__arreglo[i][j] == 1:
+                return False  # El nodo tiene al menos una arista saliente
+        return True  # El nodo no tiene aristas salientes
+
+
+if __name__ == '__main__':
+    v = [1, 2, 3, 4, 5]
+    e = [(1, 2), (1, 4), (2, 5), (3, 5), (4, 5)]
+    g = digrafo(v)
+    g.insertar_entradas(e)
+    print('---------')
+    u = int(input('Ingrese vertice para ver sus adyacentes: '))
+    print(f'Adyacentes de {u}: ', g.adyacentes(u))
+    print('--------')
+    camino = g.encontrar_camino(1, 5, set(), [])
+    if camino:
+        print(f"Camino desde {1} a {5}: {camino}")
+    else:
+        print(f"No hay camino desde {1} a {5}")
+    print('---------')
+    print('Conexo:', g.es_conexo())
+    print('---------')
+    print('aciclico:', g.aciclico())
+    print('---------')
+    u = int(input('Ingrese vertice por el que quiere empezar a buscar por anchura y profundidad: '))
+    print('Anchura: ',g.REA(u))
+    print('Profundidad: ',g.REP(u))
+    print('---------')
+    nodo = int(input("Ingresar nodo para calcular su grado de entrada: "))
+    grado_entrada = g.grado_entrada(nodo)
+    print(f"El grado de entrada de {nodo} es: {grado_entrada}")
+    print('---------')
+    nodo = int(input("Ingresar nodo para determinar el grado de salida: "))
+    grado_salida = g.grad_salida(nodo)
+    print(f"El grado de salida del nodo {nodo} es: {grado_salida}")
+    print('---------')
+    nodo = int(input("Ingresar nodo para evaluar si es un nodo fuente: "))
+    if g.fuente(nodo):
+        print(f"{nodo} es un nodo fuente en el grafo.")
+    else:
+        print(f"{nodo} no es un nodo fuente en el grafo.")
+    print('---------')
+    nodo = int(input("Ingresar nodo para evaluar si es un nodo sumidero: "))
+    if g.sumidero(nodo):
+        print(f"{nodo} es un nodo sumidero en el grafo.")
+    else:
+        print(f"{nodo} no es un nodo sumidero en el grafo.")
+    print('---------')
+
+    g.imprime_digrafo()
+
