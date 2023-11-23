@@ -1,76 +1,169 @@
-class Nodo:
+import numpy as np
+class nodo:
+    __dato = int
+    __enlace = int
+
     def __init__(self, dato):
-        self.dato = dato
-        self.siguiente = None
+        self.__dato = dato
+        self.__enlace = -1
 
-class ListaConCursor:
-    def __init__(self):
-        self.primero = None
-        self.cursor = None
+    def getdato(self):
+        return self.__dato
 
-    def Insertar(self, elemento):
-        nuevo_nodo = Nodo(elemento)
-        if self.primero is None:
-            self.primero = nuevo_nodo
-            self.cursor = nuevo_nodo
+    def getenlace(self):
+        return self.__enlace
+
+    def setdato(self, dato):
+        self.__dato = dato
+
+    def setenlace(self, sig):
+        self.__enlace = sig
+
+# Clase para representar la lista enlazada mediante cursores
+class ListaEnlazada:
+    __cantidad = int
+    __arreglo = []
+    __libre = int
+    __cabeza = int
+
+    def __init__(self, cantidad):
+        self.__cantidad = int(cantidad)
+        self.__arreglo = np.empty(cantidad, dtype=nodo)  # arreglo de nodos
+        self.__cabeza = -1  # Puntero al primer elemento de la lista
+        self.__libre = 0
+
+    def insertar(self, dato):
+        nuevo_nodo = nodo(dato)
+
+        if self.__libre >= self.__cantidad:
+            print("La lista está llena")
+            return
+
+        libre = self.__libre
+        self.__arreglo[libre] = nuevo_nodo
+        self.__libre += 1
+
+        if self.__cabeza == -1:
+            self.__cabeza = libre
         else:
-            nuevo_nodo.siguiente = self.cursor.siguiente
-            self.cursor.siguiente = nuevo_nodo
+            actual = self.__cabeza
+            while self.__arreglo[actual].getenlace() != -1:
+                actual = self.__arreglo[actual].getenlace()
+            self.__arreglo[actual].setenlace(libre)
 
-    def Suprimir(self):
-        if self.cursor is not None:
-            actual = self.primero
-            anterior = None
-            while actual != self.cursor:
-                anterior = actual
-                actual = actual.siguiente
-            if anterior is not None:
-                anterior.siguiente = self.cursor.siguiente
-            else:
-                self.primero = self.cursor.siguiente
-            self.cursor = self.cursor.siguiente
+    def eliminar(self, dato):
+        if self.__cabeza == -1:
+            print("La lista está vacía")
+            return
 
-    def Avanzar(self):
-        if self.cursor is not None and self.cursor.siguiente is not None:
-            self.cursor = self.cursor.siguiente
+        actual = self.__cabeza
+        anterior = -1
 
-    def Retroceder(self):
-        if self.primero is not None and self.cursor != self.primero:
-            actual = self.primero
-            while actual.siguiente != self.cursor:
-                actual = actual.siguiente
-            self.cursor = actual
+        # Buscar el nodo a eliminar y mantener el índice del nodo anterior
+        while actual != -1 and self.__arreglo[actual].getdato() != dato:
+            anterior = actual
+            actual = self.__arreglo[actual].getenlace()
 
-    def Recuperar(self):
-        if self.cursor is not None:
-            return self.cursor.dato
+        if actual == -1:
+            return print("El dato no está en la lista")
+
+        # Si el nodo a eliminar es el primero
+        if anterior == -1:
+            self.__cabeza = self.__arreglo[actual].getenlace()
         else:
+            # Enlazar el nodo anterior al nodo siguiente al que se va a eliminar
+            self.__arreglo[anterior].setenlace(self.__arreglo[actual].getenlace())
+
+        # Marcar el nodo como disponible para futuras inserciones
+        self.__arreglo[actual] = None
+
+
+    def recorrer(self):
+        if self.__cabeza == -1:
+            print("La lista está vacía")
+            return
+
+        actual = self.__cabeza
+        while actual != -1:
+            print(self.__arreglo[actual].getdato())
+            actual = self.__arreglo[actual].getenlace()
+
+    def buscar(self, dato):
+        if self.__cabeza == -1:
+            print("La lista está vacía")
             return None
+        actual = self.__cabeza
+        while self.__arreglo[actual].getdato() != dato:
+            actual = self.__arreglo[actual].getenlace()
+        return actual
 
-    def Buscar(self, elemento):
-        actual = self.primero
-        contador = 0
-        while actual is not None:
-            if actual.dato == elemento:
-                return contador
-            actual = actual.siguiente
-            contador += 1
-        return -1
+    def recuperar(self, p):
+        if p >= len(self.__arreglo) or p < 0:
+            print('Posición fuera de rango')
+            return
+        if self.__arreglo[p] is None:
+            return None
+        return self.__arreglo[p].getdato()
 
-    def Recorrer(self):
-        actual = self.primero
-        while actual is not None:
-            print(actual.dato)
-            actual = actual.siguiente
+    def primer_elemento(self):
+        if self.__cabeza == -1:
+            return print('Lista vacia')
+        return self.__arreglo[self.__cabeza].getdato()
 
-'''# Ejemplo de uso
-mi_lista = ListaConCursor()
-mi_lista.Insertar(1)
-mi_lista.Insertar(2)
-mi_lista.Insertar(3)
+    def ultimo_elemento(self):
+        if self.__cabeza == -1:
+            return print('Lista vacia')
+        actual = self.__cabeza
+        while self.__arreglo[actual].getenlace() != -1:
+            actual = self.__arreglo[actual].getenlace()
+        return self.__arreglo[actual].getdato()
 
-print("Recorrido de la lista:")
-mi_lista.Recorrer()
+    def siguiente(self, p):
+        if p >= len(self.__arreglo) or p < 0:
+            print("Índice fuera de rango")
+            return None
+        if self.__arreglo[p] is None:
+            print("El nodo en este índice está vacío")
+            return None
+        enlace = self.__arreglo[p].getenlace()
+        if enlace == -1:
+            print("No hay siguiente nodo")
+            return None
+        siguiente = self.__arreglo[enlace].getdato()
+        return siguiente
+
+
+
+    def anterior(self, p):
+        if p >= len(self.__arreglo) or p < 0:
+            print("Índice fuera de rango")
+            return None
+        if self.__arreglo[p] is None:
+            print("El nodo en este índice está vacío")
+            return None
+        if p == self.__cabeza:
+            print("El nodo es el primero, no tiene anterior")
+            return None
+        actual = self.__cabeza
+        anterior = actual
+        while self.__arreglo[actual].getenlace() != p:
+            anterior = actual
+            actual = self.__arreglo[actual].getenlace()
+        return self.__arreglo[anterior].getdato()
+# Uso
+lista = ListaEnlazada(5)
+lista.insertar(3)
+lista.insertar(5)
+lista.insertar(7)
+lista.insertar(9)
+lista.recorrer()
+
+print('se encontro el dato 7 en la posicion:', lista.buscar(7))
+print('Recuperacion de la posición 2: ', lista.recuperar(2))
+print('Primer elemento: ', lista.primer_elemento())
+print('Ultimo elemento: ', lista.ultimo_elemento())
+print('Siguiente de 5: ', lista.siguiente(1))
+print('Anterior de 5: ', lista.anterior(1))
 
 print("Recuperar elemento del cursor:", mi_lista.Recuperar())
 mi_lista.Avanzar()
