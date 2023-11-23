@@ -21,8 +21,20 @@ class ListaEnlazadaPorContenido:
 
     def Insertar(self, elemento):
         nuevo_nodo = Nodo(elemento)
-        nuevo_nodo.setsiguiente(self.__primero)
-        self.__primero = nuevo_nodo
+        if self.__primero is None:  # Si la lista está vacía
+            nuevo_nodo.setsiguiente(self.__primero)
+            self.__primero = nuevo_nodo
+        else:
+            if elemento < self.__primero.getdato():  # Si el nuevo elemento es menor que el primero
+                nuevo_nodo.setsiguiente(self.__primero)
+                self.__primero = nuevo_nodo
+            else:
+                actual = self.__primero
+                while actual.getsiguiente() is not None and actual.getsiguiente().getdato() < elemento:
+                    actual = actual.getsiguiente()
+
+                nuevo_nodo.setsiguiente(actual.getsiguiente())
+                actual.setsiguiente(nuevo_nodo)
 
     def Suprimir(self, elemento):
         actual = self.__primero
@@ -108,12 +120,15 @@ class ListaEnlazadaPorContenido:
 
 
 
-'''
+
 # Ejemplo de uso
 mi_lista = ListaEnlazadaPorContenido()
+mi_lista.Insertar(4)
+mi_lista.Insertar(3)
 mi_lista.Insertar(1)
 mi_lista.Insertar(2)
-mi_lista.Insertar(3)
+mi_lista.Insertar(5)
+
 
 print("Recorrido de la lista:")
 mi_lista.Recorrer()
@@ -122,4 +137,3 @@ print("Recuperar elemento 2:", mi_lista.Recuperar(2))
 print("Buscar elemento 3:", mi_lista.Buscar(3))
 print("Siguiente a 2:", mi_lista.Siguiente(2))
 print("Anterior a 3:", mi_lista.Anterior(3))
-'''
