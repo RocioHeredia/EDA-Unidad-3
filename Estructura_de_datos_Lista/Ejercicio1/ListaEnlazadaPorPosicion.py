@@ -1,3 +1,4 @@
+
 class Nodo:
     def __init__(self, dato):
         self.__dato = dato
@@ -16,25 +17,26 @@ class ListaEncadenadaPorPosicion:
     def __init__(self):
         self.__primero = None
 
-    def Insertar(self, elemento, posicion):
-        nuevo_nodo = Nodo(elemento)
-        if posicion == 0:
+    def Insertar(self, dato, posicion):
+        if posicion - 1 < 0:
+            print("Posición inválida")
+            return
+        nuevo_nodo = Nodo(dato)
+        if posicion - 1 == 0:
             nuevo_nodo.setsiguiente(self.__primero)
             self.__primero = nuevo_nodo
         else:
             actual = self.__primero
-            contador = 0
-            while actual is not None and contador < posicion - 1:
+            posicion_actual = 0
+            while actual is not None and posicion_actual < posicion -1:
+                anterior = actual
                 actual = actual.getsiguiente()
-                contador += 1
-            if actual is not None:
-                nuevo_nodo.setsiguiente(actual.getsiguiente())
-                actual.setsiguiente(nuevo_nodo)
-            else:
-                print("Posición fuera de rango")
+                posicion_actual += 1
+            anterior.setsiguiente(nuevo_nodo)
+            nuevo_nodo.setsiguiente(actual)
 
     def Suprimir(self, posicion):
-        if posicion == 0:
+        if posicion - 1 == 0:
             if self.__primero is not None:
                 self.__primero = self.__primero.getsiguiente()
             else:
@@ -53,7 +55,7 @@ class ListaEncadenadaPorPosicion:
     def Recuperar(self, posicion):
         actual = self.__primero
         contador = 0
-        while actual is not None and contador < posicion:
+        while actual is not None and contador < posicion-1:
             actual = actual.getsiguiente()
             contador += 1
         if actual is not None:
@@ -75,21 +77,20 @@ class ListaEncadenadaPorPosicion:
     def Primer_elemento(self):
         if self.__primero is not None:
             return self.__primero.getdato()
-        else:
-            return None
+
 
     def Ultimo_elemento(self):
         if self.__primero is None:
             return None
         actual = self.__primero
-        while actual.siguiente is not None:
+        while actual.getsiguiente() is not None:
             actual = actual.getsiguiente()
         return actual.getdato()
 
     def Siguiente(self, posicion):
         actual = self.__primero
         contador = 0
-        while actual is not None and contador < posicion:
+        while actual is not None and contador < posicion-1:
             actual = actual.getsiguiente()
             contador += 1
         if actual is not None and actual.getsiguiente() is not None:
@@ -117,15 +118,15 @@ class ListaEncadenadaPorPosicion:
             print(actual.getdato())
             actual = actual.getsiguiente()
 
-'''
+
 # Ejemplo de uso
 mi_lista = ListaEncadenadaPorPosicion()
-mi_lista.Insertar(1, 0)
-mi_lista.Insertar(2, 1)
+mi_lista.Insertar(1, 1)
+mi_lista.Insertar(2, 4)
 mi_lista.Insertar(3, 2)
+mi_lista.Insertar(4, 3)
 print(mi_lista.Recorrer())  # Imprimir la lista: [1, 2, 3]
-print(mi_lista.Recuperar(1))  # Recuperar el elemento en la posición 1: 2
-print(mi_lista.Buscar(3))  # Buscar el elemento 3: Devuelve la posición 2
-print(mi_lista.Siguiente(1))  # Siguiente posición después de 1: 2
-print(mi_lista.Anterior(2))  # Posición anterior a 2: 1
-'''
+print('Recuperar posición 2:', mi_lista.Recuperar(2))  # Recuperar el elemento en la posición 2: 4
+print('Buscar elemento 3:', mi_lista.Buscar(3))  # Buscar el elemento 3: Devuelve la posición 2
+print('Siguiente posición después de 1:', mi_lista.Siguiente(1))  # Siguiente posición después de 1: 2
+print('Posición anterior a 2:', mi_lista.Anterior(2))  # Posición anterior a 2: 1
