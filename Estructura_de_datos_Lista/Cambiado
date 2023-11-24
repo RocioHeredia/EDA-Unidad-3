@@ -36,7 +36,6 @@ class ListaEnlazada:
         nuevo_nodo = nodo(dato)
         if self.__libre >= self.__cantidad:
             print("La lista está llena")
-            return
         libre = self.__libre
         if self.__cabeza == -1:
             self.__cabeza = libre
@@ -49,14 +48,12 @@ class ListaEnlazada:
                 anterior = actual
                 actual = self.__arreglo[actual].getenlace()
             if anterior is None:
-                # Insertar al principio de la lista
-                nuevo_nodo.setenlace(self.__cabeza)
+                nuevo_nodo.setenlace(self.__cabeza)    # Insertar al principio de la lista
                 self.__arreglo[libre] = nuevo_nodo
                 self.__cabeza = libre
                 self.__libre += 1
             else:
-                # Insertar en medio o al final de la lista
-                self.__arreglo[anterior].setenlace(libre)
+                self.__arreglo[anterior].setenlace(libre)   # Insertar en medio o al final de la lista
                 self.__arreglo[libre] = nuevo_nodo
                 self.__libre += 1
 
